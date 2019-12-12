@@ -1,5 +1,5 @@
 #encoding=utf8
-import urllib,urllib2
+import urlparse,urllib2
 import functools
 import json
 def get_deco(func):
@@ -12,12 +12,10 @@ def get_deco(func):
         if not qs:
             start_response('400', header)
             return 'need params'
-        qs = urllib.unquote_plus(qs).decode('utf8')
-        qs = qs.split('&')
+        q = urlparse.parse_qs(qs)
         qsd = {}
-        for i in qs:
-            i = i.split('=')
-            qsd[i[0]] = i[1]
+        for k,v in q.items():
+            qsd[k] = v[0]
         ret = func(env,start_response,header,qsd=qsd)
         return ret
     return inner
